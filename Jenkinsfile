@@ -13,9 +13,15 @@ pipeline {
 
         stage('Lint') {
             steps {
-                // Run Flake8 as in your lint.yml
-                sh 'pip install flake8'
+               dir('backend') {
+                sh 'npm install'
                 sh 'npm run lint'
+        }
+        // Install dependencies and run lint for frontend
+                dir('frontend') {
+                sh 'npm install'
+                sh 'npm run lint'
+        }
             }
         }
 
