@@ -18,6 +18,5 @@ jobs:
             exit 1
           fi
       - name: Run flake8
-        run:  flake8 --extend-ignore=E999 app.py flake8 --extend-ignore=E999 app.py
         run:  flake8 . --count --show-source --statistics 
 
