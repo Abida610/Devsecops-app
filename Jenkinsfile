@@ -1,10 +1,5 @@
 pipeline{
-    agent {
-        docker {
-            image 'python:3.13-slim'  // Pre-installs Python/pip
-            args '-v /tmp:/tmp'
-        }
-    }
+    agent any
     stages{
         stage('Checkout'){
             steps{
