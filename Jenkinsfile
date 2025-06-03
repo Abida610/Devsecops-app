@@ -1,8 +1,7 @@
 pipeline {
     agent any
     environment {
-        // Define Docker registry or image name for your app
-        DOCKER_IMAGE = "my-app:${env.BUILD_NUMBER}"
+        DOCKER_IMAGE = "3tier-app:${env.BUILD_NUMBER}"
     }
     stages {
         stage('Checkout') {
@@ -15,8 +14,8 @@ pipeline {
         stage('Lint') {
             steps {
                 // Run Flake8 as in your lint.yml
-               
-                sh 'flake8 --extend-ignore=E999 app.py'
+                sh 'pip install flake8'
+                sh 'npm run lint'
             }
         }
 
@@ -30,9 +29,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                dir('backend') {
                 // Build a Docker image for your app.py
-                sh 'docker build -t ${DOCKER_IMAGE} .'
-            }
+                    sh 'docker build -t ${DOCKER_IMAGE} .'
+            }}
         }
 
         stage('Monitor with Prometheus') {

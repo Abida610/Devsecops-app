@@ -1,4 +1,6 @@
-FROM python:3.13-slim
+FROM node:18-slim
 WORKDIR /app
-COPY app.py .
-CMD ["python", "app.py"]
+COPY backend/package*.json ./
+RUN npm install
+COPY backend/ .
+CMD ["npm", "start"]
