@@ -1,9 +1,5 @@
 pipeline{
     agent any
-    environment {
-        // Use system Python or specify exact path
-        PYTHON = '/usr/bin/python3'
-    }
     stages{
         stage('Checkout'){
             steps{
@@ -13,21 +9,22 @@ pipeline{
         stage('Setup Python') {
             steps {
                 sh '''
-                     if command -v apt-get >/dev/null; then
-                        apt-get update -qq && apt-get install -y python3 python3-pip python3-venv
-                    elif command -v apk >/dev/null; then
-                        apk add python3 py3-pip python3-dev
-                    fi
+                    python3 -m venv venv
+                    . venv/bin/activate
                     
-                    python3 -m pip install --upgrade pip
+                    # Upgrade pip inside venv
+                    pip install --upgrade pip
+                    
+                    # Install requirements
+                    pip install flake8
                 '''
             }
         }
         stage('Lint'){
             steps{
               sh '''
-                    python3 -m pip install flake8
-                    flake8 . --count --show-source --statistics || echo "Linting failed"
+                    . venv/bin/activate
+                    flake8 . --count --show-source --statistics
                 '''
             }
         
@@ -35,7 +32,11 @@ pipeline{
         
         stage('Build & Test') {
             steps {
-                sh 'python3 app.py'
+                sh '''
+                . venv/bin/activate
+                python app.py
+                '''
+
             }
         }
 
