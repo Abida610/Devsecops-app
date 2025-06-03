@@ -13,16 +13,15 @@ pipeline {
 
         stage('Lint') {
             steps {
-               dir('backend') {
-                sh 'npm install'
-                sh 'npm run lint'
-        }
-        // Install dependencies and run lint for frontend
-                dir('frontend') {
-                sh 'npm install'
-                sh 'npm run lint'
-        }
-            }
+        // Run lint for backend inside a Node.js container
+                sh '''
+                    docker run --rm -v $(pwd)/backend:/app -w /app node:18-slim sh -c "npm install && npm run lint"
+                '''
+                // Run lint for frontend inside a Node.js container
+                sh '''
+                    docker run --rm -v $(pwd)/frontend:/app -w /app node:18-slim sh -c "npm install && npm run lint"
+                '''
+    }
         }
 
         stage('SonarQSB Analysis') {
