@@ -17,7 +17,7 @@ pipeline{
                     '''
         }
 
-        }
+        }}
         stage('Build & Test') {
             steps {
                 sh 'python app.py'
