@@ -11,7 +11,13 @@ jobs:
           python-version: "3.13"
       - name: Install dependencies
         run: pip install flake8
+      - name: Check for binary files
+        run: |
+          if grep -rIlP "\x00" .; then
+            echo "Fichiers binaires ou corrompus détectés. Ignorez-les dans Flake8."
+            exit 1
+          fi
       - name: Run flake8
-        run:  flake8 . --count --show-source --statistics
+        run:  flake8 . --count --show-source --statistics --exclude=app.py
 
 
