@@ -1,42 +1,37 @@
 pipeline{
     agent any
+    environment {
+        // Use system Python or specify exact path
+        PYTHON = '/usr/bin/python3'
+    }
     stages{
         stage('Checkout'){
             steps{
-                git branch:'main',
-                url: 'https://github.com/Abida610/Devsecops-app'}
+                checkout scm
+        }
+        }
+        stage('Setup Python') {
+            steps {
+                sh '''
+                    sudo apt-get update -y
+                    sudo apt-get install -y python3 python3-pip python3-venv
+                    python3 -m pip install --upgrade pip
+                '''
+            }
         }
         stage('Lint'){
             steps{
-             script {
-                    try {
-                        // Check for binary/null bytes first
-                        def hasNullBytes = sh(script: 'grep -rIlP "\\x00" app.py', returnStatus: true) == 0
-                        
-                        if (hasNullBytes) {
-                            error("Found null bytes in app.py - File may be corrupted!")
-                        } else {
-                            // Install flake8 in a virtual environment
-                            sh '''
-                                python3 -m venv venv
-                                . venv/bin/activate
-                                pip install flake8
-                                flake8 --extend-ignore=E999 app.py
-                            '''
-                        }
-                    } catch (Exception e) {
-                        echo "Linting failed: ${e.getMessage()}"
-                        // Continue to build anyway (remove if you want to fail)
-                        // currentBuild.result = 'UNSTABLE' 
-                    }
-                }
+              sh '''
+                    python3 -m pip install flake8
+                    flake8 . --count --show-source --statistics || echo "Linting failed"
+                '''
             }
         
 }
         
         stage('Build & Test') {
             steps {
-                sh 'python app.py'
+                sh 'python3 app.py'
             }
         }
 
