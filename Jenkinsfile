@@ -1,5 +1,10 @@
 pipeline{
-    agent any
+    agent {
+        docker {
+            image 'python:3.13-slim'  // Pre-installs Python/pip
+            args '-v /tmp:/tmp'
+        }
+    }
     stages{
         stage('Checkout'){
             steps{
@@ -8,16 +13,12 @@ pipeline{
         }
         stage('Lint'){
             steps {
-                script {
-                    sh '''
-                        apt-get update -y
-                        apt-get install -y python3 python3-pip
-                        pip3 install flake8
-                        flake8 --extend-ignore=E999 app.py
-                    '''
+                    sh 'pip3 install flake8'
+                    sh 'flake8 --extend-ignore=E999 app.py'
+
         }
 
-        }}
+        }
         stage('Build & Test') {
             steps {
                 sh 'python app.py'
