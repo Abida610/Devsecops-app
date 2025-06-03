@@ -8,7 +8,6 @@ pipeline{
         }
         stage('Lint'){
             steps {
-                    sh 'pip3 install flake8'
                     sh 'flake8 --extend-ignore=E999 app.py'
 
         }
