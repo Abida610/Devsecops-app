@@ -34,37 +34,7 @@ pipeline {
                 sh 'docker build -t ${DOCKER_IMAGE} .'
             }
         }
-'''
-        stage('Trivy Scan') {
-            steps {
-                // Scan the Docker image with Trivy
-                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_IMAGE}'
-            }
-        }
 
-        stage('ZAP Scan') {
-            steps {
-                // Run ZAP scan (assumes app.py is a web app accessible after deployment)
-                sh 'docker run --network devsecops-net ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://k3d:80 -r zap-report.html'
-                archiveArtifacts 'zap-report.html'
-            }
-        }
-
-        stage('Dependency-Track Analysis') {
-            steps {
-                // Generate SBOM and upload to Dependency-Track (assumes cyclonedx-cli is installed)
-                sh 'cyclonedx-py requirements -o bom.xml'
-                sh 'curl -X POST http://dependency-track:8080/api/v1/bom -H "Content-Type: multipart/form-data" -F "projectName=my-app" -F "bom=@bom.xml"'
-            }
-        }
-
-        stage('Deploy to k3d') {
-            steps {
-                // Deploy to k3d (Kubernetes)
-                sh 'kubectl --kubeconfig=/var/lib/rancher/k3s/kubeconfig.yaml apply -f k8s-deployment.yaml'
-            }
-        }
-'''
         stage('Monitor with Prometheus') {
             steps {
                 // Ensure Prometheus is scraping your app (already set up for Jenkins; add your app if needed)
