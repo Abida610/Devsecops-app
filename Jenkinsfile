@@ -7,6 +7,7 @@ pipeline{
                 url: 'https://github.com/Abida610/Devsecops-app'}
         }
         stage('Lint'){
+            steps{
              script {
                     try {
                         // Check for binary/null bytes first
@@ -31,7 +32,7 @@ pipeline{
                 }
             }
         
-
+}
         
         stage('Build & Test') {
             steps {
