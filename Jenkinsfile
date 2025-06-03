@@ -15,7 +15,7 @@ pipeline {
         stage('Lint') {
             steps {
                 // Run Flake8 as in your lint.yml
-                sh 'pip install flake8'
+                sh 'apt install python3-flake8'
                 sh 'flake8 --extend-ignore=E999 app.py'
             }
         }
