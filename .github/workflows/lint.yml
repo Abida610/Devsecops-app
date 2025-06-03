@@ -1,22 +1,31 @@
 name: Lint Code
-on: [push,pull_request]
+on: [push, pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: "3.13"
+          node-version: '18' # Matches the Node.js version in your Docker images
       - name: Install dependencies
-        run: pip install flake8
+        run: |
+          cd backend && npm install
+          cd ../frontend && npm install
       - name: Check for binary files
         run: |
           if grep -rIlP "\x00" .; then
-            echo "Fichiers binaires ou corrompus détectés. Ignorez-les dans Flake8."
+            echo "Binary or corrupted files detected. Exclude them from linting."
             exit 1
           fi
-      - name: Run flake8
-        run:  flake8 --extend-ignore=E999 app.py 
-
+      - name: Install ESLint
+        run: npm install -g eslint
+      - name: Run ESLint on backend
+        run: |
+          cd backend
+          eslint --ext .js index.js
+      - name: Run ESLint on frontend
+        run: |
+          cd ../frontend
+          eslint --ext .js,.jsx src/
