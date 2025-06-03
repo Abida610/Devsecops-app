@@ -9,7 +9,7 @@ pipeline{
         stage('Setup Python') {
             steps {
                 sh '''
-                    apt install python3.11-venv
+                    apt install python3.11-venv --system-site-packages
                     . venv/bin/activate
                     
                     # Upgrade pip inside venv
