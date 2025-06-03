@@ -13,8 +13,12 @@ pipeline{
         stage('Setup Python') {
             steps {
                 sh '''
-                    sudo apt-get update -y
-                    sudo apt-get install -y python3 python3-pip python3-venv
+                     if command -v apt-get >/dev/null; then
+                        apt-get update -qq && apt-get install -y python3 python3-pip python3-venv
+                    elif command -v apk >/dev/null; then
+                        apk add python3 py3-pip python3-dev
+                    fi
+                    
                     python3 -m pip install --upgrade pip
                 '''
             }
