@@ -9,23 +9,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18' # Matches the Node.js version in your Docker images
-      - name: Install dependencies
+      - name: Install dependencies and lint
         run: |
-          cd backend && npm install
-          cd ../frontend && npm install
+          cd backend && npm install && npx eslint --ext .js index.js
+          cd ../frontend && npm install && npx eslint --ext .js,.jsx src/
+
       - name: Check for binary files
         run: |
           if grep -rIlP "\x00" .; then
             echo "Binary or corrupted files detected. Exclude them from linting."
             exit 1
           fi
-      - name: Install ESLint
-        run: npm install -g eslint
-      - name: Run ESLint on backend
-        run: |
-          cd backend
-          eslint --ext .js index.js
-      - name: Run ESLint on frontend
-        run: |
-          cd ../frontend
-          eslint --ext .js,.jsx src/
