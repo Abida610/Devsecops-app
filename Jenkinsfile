@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     // Installation de Node.js (nécessite le plugin NodeJS de Jenkins)
-                    nodejs(nodeJSInstallationName: 'nodejs-${NODE_VERSION}') {
+                    nodejs(nodeJSInstallationName: 'nodejs-18') {
                         sh 'node --version'
                         sh 'npm --version'
                     }
