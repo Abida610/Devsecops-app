@@ -10,21 +10,34 @@ pipeline {
                 git url: 'https://github.com/Abida610/Devsecops-app.git', branch: 'main'
             }
         }
-
-        stage('Lint') {
+        stage('Setup Node.js') {
             steps {
-        // Run lint for backend inside a Node.js container
-                sh '''
-                docker run --rm -v $(pwd)/backend:/app -w /app node:18-slim npm install
-            docker run --rm -v $(pwd)/backend:/app -w /app node:18-slim npm run lint
-                '''
-                // Run lint for frontend inside a Node.js container
-                sh '''
-docker run --rm -v $(pwd)/frontend:/app -w /app node:18-slim npm install
-            docker run --rm -v $(pwd)/frontend:/app -w /app node:18-slim npm run lint                '''
-    }
+                script {
+                    // Installation de Node.js (nécessite le plugin NodeJS de Jenkins)
+                    nodejs(nodeJSInstallationName: 'nodejs-${NODE_VERSION}') {
+                        sh 'node --version'
+                        sh 'npm --version'
+                    }
+                }
+            }
+        }
+        stage('Lint Backend') {
+            steps {
+                dir('backend') {
+                    sh 'npm install'
+                    sh 'npx eslint --ext .js index.js'
+                }
+            }
         }
 
+        stage('Lint Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install'
+                    sh 'npx eslint --ext .js,.jsx src/'
+                }
+            }
+        }
         stage('SonarQSB Analysis') {
             steps {
                 // Run SonarQube analysis (assumes SonarQube Scanner plugin is installed)
