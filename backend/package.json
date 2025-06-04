@@ -7,6 +7,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "express": "^9.28.2"
+    "express": "^5.1.0"
   }
 }
