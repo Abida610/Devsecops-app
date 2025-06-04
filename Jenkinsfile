@@ -15,12 +15,13 @@ pipeline {
             steps {
         // Run lint for backend inside a Node.js container
                 sh '''
-                    docker run --rm -v $(pwd)/backend:/app -w /app node:18-slim sh -c "npm install && npm run lint"
+                docker run --rm -v $(pwd)/backend:/app -w /app node:18-slim npm install
+            docker run --rm -v $(pwd)/backend:/app -w /app node:18-slim npm run lint
                 '''
                 // Run lint for frontend inside a Node.js container
                 sh '''
-                    docker run --rm -v $(pwd)/frontend:/app -w /app node:18-slim sh -c "npm install && npm run lint"
-                '''
+docker run --rm -v $(pwd)/frontend:/app -w /app node:18-slim npm install
+            docker run --rm -v $(pwd)/frontend:/app -w /app node:18-slim npm run lint                '''
     }
         }
 
